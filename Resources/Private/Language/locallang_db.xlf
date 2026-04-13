@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" product-name="mfa_email">
+    <file source-language="en" datatype="plaintext" original="messages" product-name="q23_mfa_email">
         <header/>
         <body>
             <trans-unit id="fe_users.tx_dpvmfaemail_enabled" xml:space="preserve">

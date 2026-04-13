@@ -1,6 +1,6 @@
 # Configuration
 
-Go to **Admin Tools → Settings → Extension Configuration → mfa_email**.
+Go to **Admin Tools → Settings → Extension Configuration → q23_mfa_email**.
 
 ## Settings
 

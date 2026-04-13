@@ -135,7 +135,7 @@ class CodeService
         // Check global toggle first
         try {
             $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)
-                ->get('mfa_email');
+                ->get('q23_mfa_email');
             if (!empty($extConf['enableForAll'])) {
                 return true;
             }

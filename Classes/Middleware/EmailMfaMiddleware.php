@@ -138,7 +138,7 @@ class EmailMfaMiddleware implements MiddlewareInterface
     {
         try {
             $conf = GeneralUtility::makeInstance(ExtensionConfiguration::class)
-                ->get('mfa_email') ?? [];
+                ->get('q23_mfa_email') ?? [];
             $name = trim((string)($conf['siteName'] ?? ''));
             if ($name !== '') {
                 return $name;

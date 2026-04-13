@@ -10,8 +10,8 @@ defined('TYPO3') or die();
 $temporaryColumns = [
     'tx_dpvmfaemail_enabled' => [
         'exclude' => true,
-        'label' => 'LLL:EXT:mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled',
-        'description' => 'LLL:EXT:mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled.description',
+        'label' => 'LLL:EXT:q23_mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled',
+        'description' => 'LLL:EXT:q23_mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled.description',
         'config' => [
             'type' => 'check',
             'renderType' => 'checkboxToggle',

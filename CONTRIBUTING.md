@@ -1,4 +1,4 @@
-# Contributing to mfa_email
+# Contributing to q23_mfa_email
 
 Thank you for your interest in contributing!
 

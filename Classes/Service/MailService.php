@@ -111,7 +111,7 @@ class MailService
     {
         try {
             return GeneralUtility::makeInstance(ExtensionConfiguration::class)
-                ->get('mfa_email') ?? [];
+                ->get('q23_mfa_email') ?? [];
         } catch (\Throwable $e) {
             return [];
         }

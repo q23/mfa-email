@@ -1,4 +1,4 @@
-# mfa_email — Email Two-Factor Authentication for TYPO3
+# q23_mfa_email — Email Two-Factor Authentication for TYPO3
 
 [![TYPO3](https://img.shields.io/badge/TYPO3-12.4-orange.svg)](https://typo3.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
@@ -28,7 +28,7 @@ composer require q23/mfa-email
 ```
 
 1. Flush caches: **Maintenance → Flush all caches**
-2. Go to **Admin Tools → Settings → Extension Configuration → mfa_email**
+2. Go to **Admin Tools → Settings → Extension Configuration → q23_mfa_email**
 3. Enable the global 2FA setting — or configure MFA per frontend user
 
 ## Requirements

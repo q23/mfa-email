@@ -19,7 +19,7 @@ Then flush all caches: **Maintenance → Flush all caches**.
 Build the ZIP:
 
 ```bash
-zip -r ../mfa_email.zip . \
+zip -r ../q23_mfa_email.zip . \
   -x '*.git*' -x '*.DS_Store*' \
   -x 'README.md' -x 'CONTRIBUTING.md' \
   -x 'CHANGELOG.md' -x 'SECURITY.md' \

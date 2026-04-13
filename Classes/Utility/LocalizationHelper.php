@@ -12,7 +12,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class LocalizationHelper
 {
-    private const LANGUAGE_FILE_PREFIX = 'LLL:EXT:mfa_email/Resources/Private/Language/locallang.xlf:';
+    private const LANGUAGE_FILE_PREFIX = 'LLL:EXT:q23_mfa_email/Resources/Private/Language/locallang.xlf:';
 
     public static function translateForRequest(
         ServerRequestInterface $request,
