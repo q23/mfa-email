@@ -11,6 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Q23\MfaEmail\Service\CodeService;
 use Q23\MfaEmail\Service\MailService;
 use Q23\MfaEmail\Updates\DatabaseMigration;
+use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -86,7 +87,7 @@ class EmailMfaMiddleware implements MiddlewareInterface
     ): ResponseInterface {
         // Check lockout
         if ($this->codeService->isLocked($feUserUid)) {
-            return new HtmlResponse($this->renderPage($this->getLockedHtml()));
+            return new HtmlResponse($this->renderPage($request, $this->getLockedHtml($request)));
         }
 
         $parsedBody = $request->getParsedBody() ?? [];
@@ -109,7 +110,10 @@ class EmailMfaMiddleware implements MiddlewareInterface
             // Verification failed
             $remaining = $this->codeService->getRemainingSeconds($feUserUid);
             return new HtmlResponse(
-                $this->renderPage($this->getCodeFormHtml(true, $remaining, $request->getUri()->getPath()))
+                $this->renderPage(
+                    $request,
+                    $this->getCodeFormHtml($request, true, $remaining, $request->getUri()->getPath())
+                )
             );
         }
 
@@ -119,40 +123,49 @@ class EmailMfaMiddleware implements MiddlewareInterface
 
         $code = $this->codeService->generateCode($feUserUid);
         $validMinutes = (int)ceil(CodeService::CODE_VALIDITY_SECONDS / 60);
-        $this->mailService->sendCode($email, $name, $code, $validMinutes);
+        $this->mailService->sendCode($request, $email, $name, $code, $validMinutes);
 
         $remaining = CodeService::CODE_VALIDITY_SECONDS;
         return new HtmlResponse(
-            $this->renderPage($this->getCodeFormHtml(false, $remaining, $request->getUri()->getPath()))
+            $this->renderPage(
+                $request,
+                $this->getCodeFormHtml($request, false, $remaining, $request->getUri()->getPath())
+            )
         );
     }
 
-    private function getSiteName(): string
+    private function getSiteName(ServerRequestInterface $request): string
     {
         try {
             $conf = GeneralUtility::makeInstance(ExtensionConfiguration::class)
                 ->get('mfa_email') ?? [];
             $name = trim((string)($conf['siteName'] ?? ''));
-            return $name !== '' ? $name : 'My Website';
+            if ($name !== '') {
+                return $name;
+            }
         } catch (\Throwable $e) {
-            return 'My Website';
+            // Fall back to the localized default below.
         }
+
+        return LocalizationHelper::translateForRequest($request, 'defaults.siteName');
     }
 
     /**
      * Wrap the form content in a full HTML page.
      */
-    private function renderPage(string $content): string
+    private function renderPage(ServerRequestInterface $request, string $content): string
     {
-        $siteName = htmlspecialchars($this->getSiteName());
+        $siteName = $this->getSiteName($request);
+        $pageTitle = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'page.title', [$siteName]));
+        $htmlLanguage = LocalizationHelper::getHtmlLanguageForRequest($request);
         return <<<HTML
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{$htmlLanguage}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Login – Verification Code | {$siteName}</title>
+    <title>{$pageTitle}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -277,36 +290,43 @@ HTML;
     /**
      * HTML for the code entry form.
      */
-    private function getCodeFormHtml(bool $hasError, int $remainingSeconds, string $redirectPath): string
+    private function getCodeFormHtml(
+        ServerRequestInterface $request,
+        bool $hasError,
+        int $remainingSeconds,
+        string $redirectPath
+    ): string
     {
-        $siteName = htmlspecialchars($this->getSiteName());
+        $siteName = htmlspecialchars($this->getSiteName($request));
         $errorHtml = '';
         if ($hasError) {
             $errorHtml = '<div class="mfa-error">'
-                . 'Invalid or expired code. Please try again.'
+                . htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.error.invalidCode'))
                 . '</div>';
         }
 
         $minutes = (int)floor($remainingSeconds / 60);
         $seconds = $remainingSeconds % 60;
-        $timerText = sprintf('Code valid for %d:%02d minutes', $minutes, $seconds);
+        $timerText = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.timer', [$minutes, $seconds]));
         $escapedRedirect = htmlspecialchars($redirectPath);
+        $subtitle = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.subtitle'));
+        $description = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.description'));
+        $codeLabel = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.label.code'));
+        $verifyLabel = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.button.verify'));
+        $resendLabel = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.button.resend'));
 
         return <<<HTML
         <div class="mfa-header">
             <h1>{$siteName}</h1>
-            <p>Two-Factor Authentication</p>
+            <p>{$subtitle}</p>
         </div>
         <div class="mfa-icon">&#128274;</div>
-        <p class="mfa-description">
-            A 6-digit verification code has been sent to your<br>
-            email address.
-        </p>
+        <p class="mfa-description">{$description}</p>
         {$errorHtml}
         <form method="post" action="">
             <input type="hidden" name="tx_dpvmfaemail_redirect" value="{$escapedRedirect}">
             <label for="mfa-code" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">
-                Verification Code
+                {$codeLabel}
             </label>
             <input type="text" name="tx_dpvmfaemail_code" id="mfa-code"
                    class="mfa-input"
@@ -315,9 +335,9 @@ HTML;
                    autocomplete="one-time-code" autofocus
                    required>
             <p class="mfa-timer">{$timerText}</p>
-            <button type="submit" class="mfa-btn">Verify</button>
+            <button type="submit" class="mfa-btn">{$verifyLabel}</button>
             <button type="submit" name="tx_dpvmfaemail_resend" value="1" class="mfa-resend">
-                Resend code
+                {$resendLabel}
             </button>
         </form>
 HTML;
@@ -326,21 +346,25 @@ HTML;
     /**
      * HTML for the lockout message.
      */
-    private function getLockedHtml(): string
+    private function getLockedHtml(ServerRequestInterface $request): string
     {
-        $siteName = htmlspecialchars($this->getSiteName());
+        $siteName = htmlspecialchars($this->getSiteName($request));
+        $subtitle = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.subtitle'));
+        $lockTitle = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'lock.title'));
+        $lockDescription = htmlspecialchars(LocalizationHelper::translateForRequest(
+            $request,
+            'lock.description',
+            [(int)ceil(CodeService::LOCKOUT_SECONDS / 60)]
+        ));
         return <<<HTML
         <div class="mfa-header">
             <h1>{$siteName}</h1>
-            <p>Two-Factor Authentication</p>
+            <p>{$subtitle}</p>
         </div>
         <div class="mfa-locked">
             <div style="font-size: 48px; margin-bottom: 15px;">&#9888;</div>
-            <h2>Temporarily locked</h2>
-            <p style="color: #666; line-height: 1.6;">
-                Too many failed attempts.<br>
-                Please try again in 15 minutes.
-            </p>
+            <h2>{$lockTitle}</h2>
+            <p style="color: #666; line-height: 1.6;">{$lockDescription}</p>
         </div>
 HTML;
     }

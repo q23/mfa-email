@@ -10,8 +10,8 @@ defined('TYPO3') or die();
 $temporaryColumns = [
     'tx_dpvmfaemail_enabled' => [
         'exclude' => true,
-        'label' => 'E-Mail 2FA aktiviert',
-        'description' => 'Aktiviert die Zwei-Faktor-Authentifizierung per E-Mail fuer diesen Benutzer.',
+        'label' => 'LLL:EXT:mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled',
+        'description' => 'LLL:EXT:mfa_email/Resources/Private/Language/locallang_db.xlf:fe_users.tx_dpvmfaemail_enabled.description',
         'config' => [
             'type' => 'check',
             'renderType' => 'checkboxToggle',

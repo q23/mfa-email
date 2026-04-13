@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" product-name="mfa_email">
+        <header/>
+        <body>
+            <trans-unit id="fe_users.tx_dpvmfaemail_enabled" xml:space="preserve">
+                <source>Email 2FA enabled</source>
+                <target>E-Mail-2FA aktiviert</target>
+            </trans-unit>
+            <trans-unit id="fe_users.tx_dpvmfaemail_enabled.description" xml:space="preserve">
+                <source>Enables email-based two-factor authentication for this frontend user.</source>
+                <target>Aktiviert die E-Mail-basierte Zwei-Faktor-Authentifizierung für diesen Frontend-Benutzer.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" product-name="mfa_email">
+        <header/>
+        <body>
+            <trans-unit id="defaults.siteName" xml:space="preserve">
+                <source>My Website</source>
+                <target>Meine Website</target>
+            </trans-unit>
+            <trans-unit id="mail.subject.withPrefix" xml:space="preserve">
+                <source>%s: Your verification code</source>
+                <target>%s: Ihr Verifizierungscode</target>
+            </trans-unit>
+            <trans-unit id="mail.subject.withoutPrefix" xml:space="preserve">
+                <source>Your verification code</source>
+                <target>Ihr Verifizierungscode</target>
+            </trans-unit>
+            <trans-unit id="mail.greeting.named" xml:space="preserve">
+                <source>Hello %s,</source>
+                <target>Hallo %s,</target>
+            </trans-unit>
+            <trans-unit id="mail.greeting.unnamed" xml:space="preserve">
+                <source>Hello,</source>
+                <target>Hallo,</target>
+            </trans-unit>
+            <trans-unit id="mail.body.intro" xml:space="preserve">
+                <source>Your verification code for %s:</source>
+                <target>Ihr Verifizierungscode für %s:</target>
+            </trans-unit>
+            <trans-unit id="mail.body.lead" xml:space="preserve">
+                <source>Your verification code:</source>
+                <target>Ihr Verifizierungscode:</target>
+            </trans-unit>
+            <trans-unit id="mail.body.validity" xml:space="preserve">
+                <source>This code is valid for %d minutes.</source>
+                <target>Dieser Code ist %d Minuten gültig.</target>
+            </trans-unit>
+            <trans-unit id="mail.body.security" xml:space="preserve">
+                <source>If you did not initiate this login, please ignore this email and consider changing your password as a precaution.</source>
+                <target>Falls Sie diese Anmeldung nicht gestartet haben, ignorieren Sie diese E-Mail bitte und ändern Sie vorsorglich Ihr Passwort.</target>
+            </trans-unit>
+            <trans-unit id="page.title" xml:space="preserve">
+                <source>Login - Verification Code | %s</source>
+                <target>Anmeldung - Verifizierungscode | %s</target>
+            </trans-unit>
+            <trans-unit id="form.subtitle" xml:space="preserve">
+                <source>Two-Factor Authentication</source>
+                <target>Zwei-Faktor-Authentifizierung</target>
+            </trans-unit>
+            <trans-unit id="form.description" xml:space="preserve">
+                <source>A 6-digit verification code has been sent to your email address.</source>
+                <target>Ein 6-stelliger Verifizierungscode wurde an Ihre E-Mail-Adresse gesendet.</target>
+            </trans-unit>
+            <trans-unit id="form.error.invalidCode" xml:space="preserve">
+                <source>Invalid or expired code. Please try again.</source>
+                <target>Ungültiger oder abgelaufener Code. Bitte versuchen Sie es erneut.</target>
+            </trans-unit>
+            <trans-unit id="form.timer" xml:space="preserve">
+                <source>Code valid for %d:%02d minutes</source>
+                <target>Code gültig für %d:%02d Minuten</target>
+            </trans-unit>
+            <trans-unit id="form.label.code" xml:space="preserve">
+                <source>Verification Code</source>
+                <target>Verifizierungscode</target>
+            </trans-unit>
+            <trans-unit id="form.button.verify" xml:space="preserve">
+                <source>Verify</source>
+                <target>Bestätigen</target>
+            </trans-unit>
+            <trans-unit id="form.button.resend" xml:space="preserve">
+                <source>Resend code</source>
+                <target>Code erneut senden</target>
+            </trans-unit>
+            <trans-unit id="lock.title" xml:space="preserve">
+                <source>Temporarily locked</source>
+                <target>Vorübergehend gesperrt</target>
+            </trans-unit>
+            <trans-unit id="lock.description" xml:space="preserve">
+                <source>Too many failed attempts. Please try again in %d minutes.</source>
+                <target>Zu viele fehlgeschlagene Versuche. Bitte versuchen Sie es in %d Minuten erneut.</target>
+            </trans-unit>
+            <trans-unit id="upgradeWizard.title" xml:space="preserve">
+                <source>Email 2FA: Create database fields</source>
+                <target>E-Mail-2FA: Datenbankfelder anlegen</target>
+            </trans-unit>
+            <trans-unit id="upgradeWizard.description" xml:space="preserve">
+                <source>Creates the required columns for email-based two-factor authentication in the fe_users table.</source>
+                <target>Legt die erforderlichen Spalten für die E-Mail-basierte Zwei-Faktor-Authentifizierung in der Tabelle fe_users an.</target>
+            </trans-unit>
+            <trans-unit id="extConf.enableForAll" xml:space="preserve">
+                <source>Enable 2FA for all frontend users: When enabled, ALL frontend users must verify their login with an email code. When disabled, 2FA only applies to users with the individual checkbox enabled.</source>
+                <target>2FA für alle Frontend-Benutzer aktivieren: Wenn aktiviert, müssen ALLE Frontend-Benutzer ihre Anmeldung mit einem E-Mail-Code bestätigen. Wenn deaktiviert, gilt 2FA nur für Benutzer mit aktivierter individueller Checkbox.</target>
+            </trans-unit>
+            <trans-unit id="extConf.siteName" xml:space="preserve">
+                <source>Site name: Used in the verification page title and email header. Example: "My Company Portal"</source>
+                <target>Name der Website: Wird im Titel der Verifizierungsseite und im E-Mail-Kopf verwendet. Beispiel: "Portal meiner Firma"</target>
+            </trans-unit>
+            <trans-unit id="extConf.emailSubjectPrefix" xml:space="preserve">
+                <source>Email subject prefix: Prefix for the verification email subject line. Example: "MyPortal" results in subject "MyPortal: Your verification code"</source>
+                <target>E-Mail-Betreffpräfix: Präfix für die Betreffzeile der Verifizierungs-E-Mail. Beispiel: "MeinPortal" ergibt den Betreff "MeinPortal: Ihr Verifizierungscode"</target>
+            </trans-unit>
+            <trans-unit id="extConf.emailSignature" xml:space="preserve">
+                <source>Email signature: Optional closing line in verification emails. Example: "Your team at Example Corp." Leave empty to omit.</source>
+                <target>E-Mail-Signatur: Optionale Schlusszeile in Verifizierungs-E-Mails. Beispiel: "Ihr Team von Beispiel GmbH". Leer lassen, um sie wegzulassen.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

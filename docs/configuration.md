@@ -9,7 +9,7 @@ Go to **Admin Tools → Settings → Extension Configuration → mfa_email**.
 When enabled, ALL frontend users must verify their login with a 6-digit email code.
 When disabled, 2FA only applies to users with the individual per-user checkbox enabled.
 
-### `siteName` (string, default: `"My Website"`)
+### `siteName` (string, default: localized fallback)
 
 Displayed in:
 - The browser tab title of the verification page
@@ -38,7 +38,7 @@ Leave empty to omit the signature entirely.
 If `enableForAll` is disabled, you can enable 2FA for individual users:
 
 1. Open a frontend user record in the TYPO3 backend
-2. Find the **"Email 2FA enabled"** checkbox (in the Access tab, after the "Disable" field)
+2. Find the email MFA checkbox in the Access tab (after the "Disable" field)
 3. Check it and save
 
 Users without the checkbox enabled will not be prompted for a code.

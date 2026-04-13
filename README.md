@@ -29,7 +29,7 @@ composer require q23/mfa-email
 
 1. Flush caches: **Maintenance → Flush all caches**
 2. Go to **Admin Tools → Settings → Extension Configuration → mfa_email**
-3. Enable **"Enable 2FA for all frontend users"** — or configure per user
+3. Enable the global 2FA setting — or configure MFA per frontend user
 
 ## Requirements
 
