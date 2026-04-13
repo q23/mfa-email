@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Q23\MfaEmail\Updates;
 
+use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
@@ -39,12 +40,12 @@ class DatabaseMigration implements UpgradeWizardInterface
 
     public function getTitle(): string
     {
-        return 'Email 2FA: Create database fields';
+        return LocalizationHelper::translateForBackend('upgradeWizard.title');
     }
 
     public function getDescription(): string
     {
-        return 'Creates the required columns for email-based two-factor authentication in the fe_users table.';
+        return LocalizationHelper::translateForBackend('upgradeWizard.description');
     }
 
     public function getPrerequisites(): array
