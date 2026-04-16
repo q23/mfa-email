@@ -136,6 +136,7 @@ class EmailMfaMiddleware implements MiddlewareInterface
 
     private function getSiteName(ServerRequestInterface $request): string
     {
+        // 1. Extension configuration (manually set site name takes priority)
         try {
             $conf = GeneralUtility::makeInstance(ExtensionConfiguration::class)
                 ->get('q23_mfa_email') ?? [];
@@ -144,9 +145,21 @@ class EmailMfaMiddleware implements MiddlewareInterface
                 return $name;
             }
         } catch (\Throwable $e) {
-            // Fall back to the localized default below.
         }
 
+        // 2. TYPO3 site configuration (websiteTitle from config/sites/*.yaml)
+        try {
+            $site = $request->getAttribute('site');
+            if ($site !== null) {
+                $websiteTitle = trim((string)($site->getConfiguration()['websiteTitle'] ?? ''));
+                if ($websiteTitle !== '') {
+                    return $websiteTitle;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        // 3. Localized default fallback
         return LocalizationHelper::translateForRequest($request, 'defaults.siteName');
     }
 
@@ -307,9 +320,13 @@ HTML;
 
         $minutes = (int)floor($remainingSeconds / 60);
         $seconds = $remainingSeconds % 60;
-        $timerText = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.timer', [$minutes, $seconds]), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $timerTemplate = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.timer.template'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $timerExpired = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.timer.expired'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $timerTranslated = LocalizationHelper::translateForRequest($request, 'form.timer', [$minutes, $seconds]);
+        $timerText = htmlspecialchars($timerTranslated, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        // Build JS template by replacing the rendered M:SS with a placeholder — no extra XLF key needed
+        $formattedTime = sprintf('%d:%02d', $minutes, $seconds);
+        $timerTemplate = htmlspecialchars(str_replace($formattedTime, '{t}', $timerTranslated), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $timerExpiredRaw = LocalizationHelper::translateForRequest($request, 'form.timer.expired');
+        $timerExpired = htmlspecialchars($timerExpiredRaw !== '' ? $timerExpiredRaw : 'Code expired', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $escapedRedirect = htmlspecialchars($redirectPath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $subtitle = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.subtitle'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $description = htmlspecialchars(LocalizationHelper::translateForRequest($request, 'form.description'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -362,7 +379,7 @@ HTML;
                 }
                 var m = Math.floor(seconds / 60);
                 var s = seconds % 60;
-                el.textContent = template.replace('{m}', m).replace('{s}', pad(s));
+                el.textContent = template.replace('{t}', m + ':' + pad(s));
                 seconds--;
                 setTimeout(tick, 1000);
             }
