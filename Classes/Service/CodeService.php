@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Q23\MfaEmail\Service;
 
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Q23\MfaEmail\Configuration\MfaSettings;
+use Q23\MfaEmail\Domain\Repository\MfaUserRepository;
 
 /**
  * Handles generation, storage, and verification of MFA codes.
@@ -31,6 +30,12 @@ class CodeService
      */
     public const LOCKOUT_SECONDS = 900;
 
+    public function __construct(
+        private readonly MfaUserRepository $repository,
+        private readonly MfaSettings $settings,
+    ) {
+    }
+
     /**
      * Generate a 6-digit code, hash it, and store it for the user.
      *
@@ -40,17 +45,10 @@ class CodeService
     {
         $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('fe_users');
-
-        $connection->update(
-            'fe_users',
-            [
-                'tx_dpvmfaemail_code' => password_hash($code, PASSWORD_DEFAULT),
-                'tx_dpvmfaemail_code_tstamp' => time(),
-            ],
-            ['uid' => $feUserUid]
-        );
+        $this->repository->update($feUserUid, [
+            'tx_dpvmfaemail_code' => password_hash($code, PASSWORD_DEFAULT),
+            'tx_dpvmfaemail_code_tstamp' => time(),
+        ]);
 
         return $code;
     }
@@ -66,7 +64,7 @@ class CodeService
             return false;
         }
 
-        $userData = $this->getUserMfaData($feUserUid);
+        $userData = $this->repository->findMfaData($feUserUid);
         if ($userData === null) {
             return false;
         }
@@ -105,7 +103,7 @@ class CodeService
      */
     public function isLocked(int $feUserUid): bool
     {
-        $userData = $this->getUserMfaData($feUserUid);
+        $userData = $this->repository->findMfaData($feUserUid);
         if ($userData === null) {
             return false;
         }
@@ -132,19 +130,11 @@ class CodeService
      */
     public function isMfaEnabled(int $feUserUid): bool
     {
-        // Check global toggle first
-        try {
-            $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)
-                ->get('q23_mfa_email');
-            if (!empty($extConf['enableForAll'])) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-            // Extension configuration not available — fall through to per-user check
+        if ($this->settings->isEnabledForAll()) {
+            return true;
         }
 
-        // Per-user check
-        $userData = $this->getUserMfaData($feUserUid);
+        $userData = $this->repository->findMfaData($feUserUid);
         return (bool)($userData['tx_dpvmfaemail_enabled'] ?? false);
     }
 
@@ -153,7 +143,7 @@ class CodeService
      */
     public function getRemainingSeconds(int $feUserUid): int
     {
-        $userData = $this->getUserMfaData($feUserUid);
+        $userData = $this->repository->findMfaData($feUserUid);
         if ($userData === null) {
             return 0;
         }
@@ -169,72 +159,28 @@ class CodeService
 
     private function invalidateCode(int $feUserUid): void
     {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('fe_users');
-
-        $connection->update(
-            'fe_users',
-            [
-                'tx_dpvmfaemail_code' => '',
-                'tx_dpvmfaemail_code_tstamp' => 0,
-            ],
-            ['uid' => $feUserUid]
-        );
+        $this->repository->update($feUserUid, [
+            'tx_dpvmfaemail_code' => '',
+            'tx_dpvmfaemail_code_tstamp' => 0,
+        ]);
     }
 
     private function incrementAttempts(int $feUserUid): void
     {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('fe_users');
-
-        $userData = $this->getUserMfaData($feUserUid);
+        $userData = $this->repository->findMfaData($feUserUid);
         $attempts = (int)($userData['tx_dpvmfaemail_attempts'] ?? 0);
 
-        $connection->update(
-            'fe_users',
-            [
-                'tx_dpvmfaemail_attempts' => $attempts + 1,
-                'tx_dpvmfaemail_last_attempt' => time(),
-            ],
-            ['uid' => $feUserUid]
-        );
+        $this->repository->update($feUserUid, [
+            'tx_dpvmfaemail_attempts' => $attempts + 1,
+            'tx_dpvmfaemail_last_attempt' => time(),
+        ]);
     }
 
     private function resetAttempts(int $feUserUid): void
     {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('fe_users');
-
-        $connection->update(
-            'fe_users',
-            [
-                'tx_dpvmfaemail_attempts' => 0,
-                'tx_dpvmfaemail_last_attempt' => 0,
-            ],
-            ['uid' => $feUserUid]
-        );
-    }
-
-    private function getUserMfaData(int $feUserUid): ?array
-    {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('fe_users');
-
-        $row = $queryBuilder
-            ->select(
-                'tx_dpvmfaemail_enabled',
-                'tx_dpvmfaemail_code',
-                'tx_dpvmfaemail_code_tstamp',
-                'tx_dpvmfaemail_attempts',
-                'tx_dpvmfaemail_last_attempt'
-            )
-            ->from('fe_users')
-            ->where(
-                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($feUserUid, \PDO::PARAM_INT))
-            )
-            ->executeQuery()
-            ->fetchAssociative();
-
-        return $row ?: null;
+        $this->repository->update($feUserUid, [
+            'tx_dpvmfaemail_attempts' => 0,
+            'tx_dpvmfaemail_last_attempt' => 0,
+        ]);
     }
 }
