@@ -13,7 +13,7 @@
 
 ## Code Lifecycle
 
-1. Code is generated and hashed on each new login or resend request
+1. Code is generated and hashed when a new MFA challenge has no valid pending code, or on a resend request
 2. Previous code is overwritten — only one valid code exists per user at any time
 3. Code expires after **6 minutes** (`CodeService::CODE_VALIDITY_SECONDS = 360`)
 4. After successful verification, the code is **immediately deleted** from the database (single-use)

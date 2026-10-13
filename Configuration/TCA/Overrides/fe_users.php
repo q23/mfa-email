@@ -3,8 +3,8 @@
 defined('TYPO3') or die();
 
 /**
- * Add MFA enabled checkbox to fe_users records in the TYPO3 backend.
- * This allows admins to enable/disable email MFA per user.
+ * Add the per-user MFA checkbox to fe_users records in the TYPO3 backend.
+ * Global MFA enforcement from extension configuration takes precedence.
  */
 
 $temporaryColumns = [

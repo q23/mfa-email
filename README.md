@@ -12,7 +12,7 @@ sent to their registered email address. The user must enter this code to complet
 ## Features
 
 - **PSR-15 middleware** — integrates cleanly into the TYPO3 request pipeline
-- **Global or per-user toggle** — enable for everyone or selectively per `fe_users` record
+- **Global or per-user toggle** — enforce for everyone or selectively opt in `fe_users` records
 - **Brute-force protection** — lockout after 5 failed attempts (15 minutes)
 - **Time-limited codes** — expire after 6 minutes
 - **Bcrypt storage** — codes are never stored in plaintext
@@ -29,7 +29,7 @@ composer require q23/mfa-email
 
 1. Flush caches: **Maintenance → Flush all caches**
 2. Go to **Admin Tools → Settings → Extension Configuration → q23_mfa_email**
-3. Enable the global 2FA setting — or configure MFA per frontend user
+3. Enable the global 2FA setting — or configure individual MFA opt-in per frontend user
 
 ## Requirements
 
@@ -49,7 +49,7 @@ composer require q23/mfa-email
 1. User submits username and password via `felogin`
 2. TYPO3's authentication middleware authenticates the credentials
 3. This extension's middleware intercepts the request
-4. A 6-digit code is generated, bcrypt-hashed, and stored; the plaintext code is emailed
+4. A 6-digit code is generated, bcrypt-hashed, and stored if no valid code is pending; the plaintext code is emailed
 5. The user enters the code in the verification form
 6. On success: session is marked as verified, user is redirected (303) to the original page
 7. The code is immediately deleted from the database
