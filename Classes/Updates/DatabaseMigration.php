@@ -7,6 +7,7 @@ namespace Q23\MfaEmail\Updates;
 use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Install\Attribute\UpgradeWizard;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 /**
@@ -15,9 +16,9 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
  * This is registered as an Install Tool upgrade wizard AND can also be
  * triggered manually via the Upgrade Wizards module in the TYPO3 backend.
  *
- * Additionally, the middleware itself calls ensureColumnsExist() on first
- * request as a failsafe.
+ * The middleware no longer alters the schema; fields come from ext_tables.sql.
  */
+#[UpgradeWizard('mfaEmailDbMigration')]
 class DatabaseMigration implements UpgradeWizardInterface
 {
     private const TABLE = 'fe_users';

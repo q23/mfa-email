@@ -10,7 +10,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Q23\MfaEmail\Service\CodeService;
 use Q23\MfaEmail\Service\MailService;
-use Q23\MfaEmail\Updates\DatabaseMigration;
 use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -41,20 +40,8 @@ class EmailMfaMiddleware implements MiddlewareInterface
         $this->mailService = $mailService;
     }
 
-    private static bool $dbChecked = false;
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Failsafe: ensure DB columns exist on first request
-        if (!self::$dbChecked) {
-            self::$dbChecked = true;
-            try {
-                GeneralUtility::makeInstance(DatabaseMigration::class)->ensureColumnsExist();
-            } catch (\Throwable $e) {
-                // Silently continue — columns might already exist
-            }
-        }
-
         /** @var FrontendUserAuthentication|null $feUser */
         $feUser = $request->getAttribute('frontend.user');
 
