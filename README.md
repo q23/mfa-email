@@ -17,7 +17,7 @@ sent to their registered email address. The user must enter this code to complet
 - **Time-limited codes** — expire after 6 minutes
 - **Bcrypt storage** — codes are never stored in plaintext
 - **Single-use codes** — immediately invalidated after successful verification
-- **Auto-migration** — required database fields are created on first load
+- **Database fields via ext_tables.sql** — run `typo3 extension:setup` (or Install Tool → Analyze Database Structure) after installing or updating
 - **Configurable branding** — site name, email subject, and signature via extension settings
 - **No dependencies** — uses only TYPO3 core APIs
 

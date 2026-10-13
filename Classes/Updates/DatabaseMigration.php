@@ -71,8 +71,7 @@ class DatabaseMigration implements UpgradeWizardInterface
     }
 
     /**
-     * Public static method that can be called from anywhere (middleware, ext_localconf, etc.)
-     * to ensure all columns exist. Safe to call multiple times.
+     * Ensures all columns exist. Used by the upgrade wizard only; safe to call multiple times.
      *
      * @return bool true if all columns exist (or were created), false on error
      */
@@ -100,7 +99,7 @@ class DatabaseMigration implements UpgradeWizardInterface
 
             return true;
         } catch (\Throwable $e) {
-            // Log but don't crash — the middleware will show an error if columns are missing
+            // Don't crash: in backend context the wizard reports the error, otherwise false is returned
             if (isset($GLOBALS['BE_USER'])) {
                 // In backend context, re-throw so the wizard shows the error
                 throw $e;
