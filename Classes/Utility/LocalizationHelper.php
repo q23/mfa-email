@@ -49,15 +49,22 @@ final class LocalizationHelper
     {
         $siteLanguage = $request->getAttribute('language');
         if ($siteLanguage instanceof SiteLanguage) {
-            $languageTag = $siteLanguage->getHreflang();
-            if ($languageTag !== '') {
-                return htmlspecialchars($languageTag);
-            }
+            return self::languageTag(
+                $siteLanguage->getHreflang(),
+                $siteLanguage->getLocale()->getLanguageCode()
+            );
+        }
 
-            $isoCode = $siteLanguage->getTwoLetterIsoCode();
-            if ($isoCode !== '') {
-                return htmlspecialchars($isoCode);
-            }
+        return 'en';
+    }
+
+    public static function languageTag(string $hreflang, string $languageCode): string
+    {
+        if ($hreflang !== '') {
+            return htmlspecialchars($hreflang);
+        }
+        if ($languageCode !== '') {
+            return htmlspecialchars($languageCode);
         }
 
         return 'en';
