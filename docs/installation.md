@@ -12,11 +12,14 @@
 composer require q23/mfa-email
 ```
 
-Then flush all caches: **Maintenance → Flush all caches**.
+Then:
+
+1. Create the database fields: `vendor/bin/typo3 extension:setup -e q23_mfa_email`
+2. Flush all caches: **Maintenance → Flush all caches**
 
 ## Classic Mode (ZIP Upload)
 
-Build the ZIP:
+Build the ZIP from the extension root directory:
 
 ```bash
 zip -r -X ../q23_mfa_email.zip Classes Configuration Resources LICENSE \
@@ -24,8 +27,7 @@ zip -r -X ../q23_mfa_email.zip Classes Configuration Resources LICENSE \
   ext_tables.sql -x '*.DS_Store'
 ```
 
-Only the runtime files are listed, so `Tests/`, `phpunit.xml.dist`, `.Build/`
-and `.superpowers/` cannot end up in the ZIP.
+Only the runtime files are listed, so tests and dev files can never end up in the ZIP.
 
 Then in the TYPO3 backend:
 
@@ -38,6 +40,13 @@ Then in the TYPO3 backend:
 After installing or updating, run `typo3 extension:setup -e q23_mfa_email`
 (or Install Tool → Analyze Database Structure). Installations that already have
 the `tx_dpvmfaemail_*` fields need no action.
+
+**Important:** After replacing the extension files (on update and on rollback),
+flush all caches with `typo3 cache:flush` or in the Install Tool via
+**Flush TYPO3 and PHP Cache**. If PHP OPcache runs with
+`opcache.validate_timestamps=0`, reset OPcache as well. The compiled DI container
+still references the old constructor of `CodeService`, which breaks every
+frontend request.
 
 To run the upgrade wizard manually:
 **Admin Tools → Upgrade → Upgrade Wizard → Email 2FA: Create database fields**

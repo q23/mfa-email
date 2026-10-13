@@ -27,9 +27,10 @@ sent to their registered email address. The user must enter this code to complet
 composer require q23/mfa-email
 ```
 
-1. Flush caches: **Maintenance → Flush all caches**
-2. Go to **Admin Tools → Settings → Extension Configuration → q23_mfa_email**
-3. Enable the global 2FA setting — or configure individual MFA opt-in per frontend user
+1. Create the database fields: `vendor/bin/typo3 extension:setup -e q23_mfa_email`
+2. Flush caches: **Maintenance → Flush all caches**
+3. Go to **Admin Tools → Settings → Extension Configuration → q23_mfa_email**
+4. Enable the global 2FA setting — or configure individual MFA opt-in per frontend user
 
 ## Requirements
 
