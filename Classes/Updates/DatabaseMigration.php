@@ -99,9 +99,8 @@ class DatabaseMigration implements UpgradeWizardInterface
 
             return true;
         } catch (\Throwable $e) {
-            // Don't crash: in backend context the wizard reports the error, otherwise false is returned
+            // Backend: re-throw so the upgrade wizard reports the error; otherwise return false.
             if (isset($GLOBALS['BE_USER'])) {
-                // In backend context, re-throw so the wizard shows the error
                 throw $e;
             }
             return false;

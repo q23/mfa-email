@@ -1,11 +1,11 @@
 # q23_mfa_email — Email Two-Factor Authentication for TYPO3
 
-[![TYPO3](https://img.shields.io/badge/TYPO3-12.4-orange.svg)](https://typo3.org)
+[![TYPO3](https://img.shields.io/badge/TYPO3-12.4%20%7C%2013.4-orange.svg)](https://typo3.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-green.svg)](LICENSE)
 [![Packagist](https://img.shields.io/packagist/v/q23/mfa-email)](https://packagist.org/packages/q23/mfa-email)
 
-A TYPO3 12.4 extension that adds **email-based two-factor authentication** to the
+A TYPO3 12.4 and 13.4 extension that adds **email-based two-factor authentication** to the
 frontend login. After a user logs in with username and password, a 6-digit code is
 sent to their registered email address. The user must enter this code to complete login.
 
@@ -33,7 +33,7 @@ composer require q23/mfa-email
 
 ## Requirements
 
-- TYPO3 12.4.x
+- TYPO3 12.4.x and 13.4.x
 - `felogin` system extension (included with TYPO3)
 - Working TYPO3 mail configuration (`$GLOBALS['TYPO3_CONF_VARS']['MAIL']`)
 
