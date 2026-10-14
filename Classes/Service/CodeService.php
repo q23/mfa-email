@@ -157,7 +157,13 @@ class CodeService
         if ($userData === null) {
             return 0;
         }
+        $storedHash = (string)($userData['tx_dpvmfaemail_code'] ?? '');
         $codeTimestamp = (int)($userData['tx_dpvmfaemail_code_tstamp'] ?? 0);
+
+        if ($storedHash === '' || $codeTimestamp === 0) {
+            return 0;
+        }
+
         return max(0, self::CODE_VALIDITY_SECONDS - (time() - $codeTimestamp));
     }
 

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] – 2026-04-28
+
+### Fixed
+- Clarified the backend per-user 2FA checkbox so it no longer appears to disable MFA when the global "enable for all" setting is active.
+
+## [1.0.3] – 2026-04-21
+
+### Fixed
+- Prevented non-form requests during a pending MFA challenge from generating new codes and invalidating the code that was just emailed.
+
 ## [1.0.0] – 2026-04-13
 
 ### Added
@@ -23,5 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configurable site name, email subject prefix, and email signature via extension settings
 - TYPO3 upgrade wizard for manual database migration
 
-[Unreleased]: https://github.com/q23-medien/mfa-email/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/q23-medien/mfa-email/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/q23-medien/mfa-email/compare/v1.0.3...v1.0.4
+[1.0.3]: https://github.com/q23-medien/mfa-email/compare/v1.0.2...v1.0.3
 [1.0.0]: https://github.com/q23-medien/mfa-email/releases/tag/v1.0.0

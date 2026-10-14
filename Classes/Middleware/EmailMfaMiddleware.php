@@ -117,7 +117,20 @@ class EmailMfaMiddleware implements MiddlewareInterface
             );
         }
 
-        // No code submitted or resend requested -> generate and send code
+        // Non-form requests such as favicon, assets, or AJAX can reach this
+        // middleware while MFA is pending. Reuse a still-valid code so those
+        // requests do not invalidate the email the user just received.
+        $remaining = $this->codeService->getRemainingSeconds($feUserUid);
+        if (!$isResend && $remaining > 0) {
+            return new HtmlResponse(
+                $this->renderPage(
+                    $request,
+                    $this->getCodeFormHtml($request, false, $remaining, $request->getUri()->getPath())
+                )
+            );
+        }
+
+        // No valid pending code or resend requested -> generate and send code
         $email = $feUser->user['email'] ?? '';
         $name = trim(($feUser->user['first_name'] ?? '') . ' ' . ($feUser->user['last_name'] ?? ''));
 
