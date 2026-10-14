@@ -10,7 +10,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Q23\MfaEmail\Service\CodeService;
 use Q23\MfaEmail\Service\MailService;
-use Q23\MfaEmail\Updates\DatabaseMigration;
 use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -41,20 +40,8 @@ class EmailMfaMiddleware implements MiddlewareInterface
         $this->mailService = $mailService;
     }
 
-    private static bool $dbChecked = false;
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Failsafe: ensure DB columns exist on first request
-        if (!self::$dbChecked) {
-            self::$dbChecked = true;
-            try {
-                GeneralUtility::makeInstance(DatabaseMigration::class)->ensureColumnsExist();
-            } catch (\Throwable $e) {
-                // Silently continue — columns might already exist
-            }
-        }
-
         /** @var FrontendUserAuthentication|null $feUser */
         $feUser = $request->getAttribute('frontend.user');
 
@@ -117,7 +104,20 @@ class EmailMfaMiddleware implements MiddlewareInterface
             );
         }
 
-        // No code submitted or resend requested -> generate and send code
+        // Non-form requests such as favicon, assets, or AJAX can reach this
+        // middleware while MFA is pending. Reuse a still-valid code so those
+        // requests do not invalidate the email the user just received.
+        $remaining = $this->codeService->getRemainingSeconds($feUserUid);
+        if (!$isResend && $remaining > 0) {
+            return new HtmlResponse(
+                $this->renderPage(
+                    $request,
+                    $this->getCodeFormHtml($request, false, $remaining, $request->getUri()->getPath())
+                )
+            );
+        }
+
+        // No valid pending code or resend requested -> generate and send code
         $email = $feUser->user['email'] ?? '';
         $name = trim(($feUser->user['first_name'] ?? '') . ' ' . ($feUser->user['last_name'] ?? ''));
 

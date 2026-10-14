@@ -5,7 +5,7 @@ Thank you for your interest in contributing!
 ## Requirements
 
 - PHP 8.1+
-- TYPO3 12.4.x development environment
+- TYPO3 12.4.x and 13.4.x development environment
 - Composer
 
 ## Branching Model

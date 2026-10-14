@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PHPUnit: COMPOSER_HOME="$TMPDIR/composer-home" composer -d .Build/tools require phpunit/phpunit:^11.5 ; Aufruf: .Build/tools/vendor/bin/phpunit -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation=".Build/tools/vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="Tests/bootstrap.php"
+         cacheDirectory=".Build/.phpunit.cache"
+         colors="true">
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>Tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

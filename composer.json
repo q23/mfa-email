@@ -3,13 +3,21 @@
     "type": "typo3-cms-extension",
     "description": "Email-based two-factor authentication for TYPO3 frontend users",
     "license": "GPL-2.0-or-later",
+    "require": {
+        "php": "^8.1",
+        "typo3/cms-core": "^12.4 || ^13.4",
+        "typo3/cms-felogin": "^12.4 || ^13.4",
+        "typo3/cms-install": "^12.4 || ^13.4"
+    },
     "autoload": {
         "psr-4": {
             "Q23\\MfaEmail\\": "Classes/"
         }
     },
-    "require": {
-        "typo3/cms-core": "^12.4"
+    "autoload-dev": {
+        "psr-4": {
+            "Q23\\MfaEmail\\Tests\\": "Tests/"
+        }
     },
     "extra": {
         "typo3/cms": {

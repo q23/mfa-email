@@ -7,6 +7,7 @@ namespace Q23\MfaEmail\Updates;
 use Q23\MfaEmail\Utility\LocalizationHelper;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Install\Attribute\UpgradeWizard;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 /**
@@ -15,9 +16,9 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
  * This is registered as an Install Tool upgrade wizard AND can also be
  * triggered manually via the Upgrade Wizards module in the TYPO3 backend.
  *
- * Additionally, the middleware itself calls ensureColumnsExist() on first
- * request as a failsafe.
+ * The middleware no longer alters the schema; fields come from ext_tables.sql.
  */
+#[UpgradeWizard('mfaEmailDbMigration')]
 class DatabaseMigration implements UpgradeWizardInterface
 {
     private const TABLE = 'fe_users';
@@ -70,8 +71,7 @@ class DatabaseMigration implements UpgradeWizardInterface
     }
 
     /**
-     * Public static method that can be called from anywhere (middleware, ext_localconf, etc.)
-     * to ensure all columns exist. Safe to call multiple times.
+     * Ensures all columns exist. Used by the upgrade wizard only; safe to call multiple times.
      *
      * @return bool true if all columns exist (or were created), false on error
      */
@@ -99,9 +99,8 @@ class DatabaseMigration implements UpgradeWizardInterface
 
             return true;
         } catch (\Throwable $e) {
-            // Log but don't crash — the middleware will show an error if columns are missing
+            // Backend: re-throw so the upgrade wizard reports the error; otherwise return false.
             if (isset($GLOBALS['BE_USER'])) {
-                // In backend context, re-throw so the wizard shows the error
                 throw $e;
             }
             return false;

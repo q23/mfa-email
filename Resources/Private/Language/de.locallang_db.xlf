@@ -4,12 +4,12 @@
         <header/>
         <body>
             <trans-unit id="fe_users.tx_dpvmfaemail_enabled" xml:space="preserve">
-                <source>Email 2FA enabled</source>
-                <target>E-Mail-2FA aktiviert</target>
+                <source>Enable email 2FA for this user individually</source>
+                <target>E-Mail-2FA für diesen Benutzer individuell aktivieren</target>
             </trans-unit>
             <trans-unit id="fe_users.tx_dpvmfaemail_enabled.description" xml:space="preserve">
-                <source>Enables email-based two-factor authentication for this frontend user.</source>
-                <target>Aktiviert die E-Mail-basierte Zwei-Faktor-Authentifizierung für diesen Frontend-Benutzer.</target>
+                <source>Only applies when email 2FA is not enabled globally for all frontend users. If the global setting is active, this user must verify with email 2FA regardless of this checkbox.</source>
+                <target>Gilt nur, wenn E-Mail-2FA nicht global für alle Frontend-Benutzer aktiviert ist. Wenn die globale Einstellung aktiv ist, muss dieser Benutzer die Anmeldung unabhängig von dieser Checkbox per E-Mail-2FA bestätigen.</target>
             </trans-unit>
         </body>
     </file>
